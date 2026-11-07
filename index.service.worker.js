@@ -6,7 +6,7 @@
 /** @type {string} */
 const CACHE_VERSION = 'd85698ef7ee6ee79';
 /** @type {string} */
-const CACHE_PREFIX = 'Gewohnheim-sw-cache-';
+const CACHE_PREFIX = 'Living Water-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 /** @type {string} */
 const OFFLINE_URL = 'index.offline.html';
@@ -17,7 +17,7 @@ const ENSURE_CROSSORIGIN_ISOLATION_HEADERS = false;
 const CACHED_FILES = ["index.html","index.js","index.offline.html","index.icon.png","index.apple-touch-icon.png","index.audio.worklet.js","index.audio.position.worklet.js"];
 // Files that we might not want the user to preload, and will only be cached on first load.
 /** @type {string[]} */
-const CACHEABLE_FILES = ["index.wasm","index.pck"];
+const CACHEABLE_FILES = ["index.wasm","game-6a899e46e829881b.pck"];
 const FULL_CACHE = CACHED_FILES.concat(CACHEABLE_FILES);
 
 self.addEventListener('install', (event) => {
@@ -164,3 +164,8 @@ self.addEventListener('message', (event) => {
 	});
 });
 
+
+self.addEventListener('activate', (event) => {
+	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.keys().then((reqs) => Promise.all(
+		reqs.filter((r) => /game-[0-9a-f]+\.pck$/.test(r.url) && !r.url.endsWith("game-6a899e46e829881b.pck")).map((r) => cache.delete(r))))));
+});
